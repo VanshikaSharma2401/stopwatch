@@ -1,27 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 const Stopwatch = () => {
-  const [time, setTime] = useState("0:00");
+  const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
     let intervalId;
     if (running) {
       intervalId = setInterval(() => {
-        const [minutes, seconds] = time.split(':').map(parseFloat);
-        let newSeconds = seconds + 1;
-        let newMinutes = minutes;
-        if (newSeconds === 60) {
-          newMinutes += 1;
-          newSeconds = 0;
-        }
-        setTime(`${newMinutes}:${newSeconds < 10 ? '0' + newSeconds : newSeconds}`);
+        setTime((time)=>time+1)
       }, 1000);
     } else {
       clearInterval(intervalId);
     }
     return () => clearInterval(intervalId);
-  }, [running, time]);
+  }, [running]);
 
   const startStopwatch = () => {
     setRunning(true);
@@ -32,15 +25,21 @@ const Stopwatch = () => {
   };
 
   const resetStopwatch = () => {
-    setTime("0:00");
     setRunning(false);
+    setTime(0);
   };
+
+  const formatTime=(time)=>{
+    const minutes=Math.floor(time/60)
+    const seconds =time%60
+    return `${minutes}:${seconds<10?"0":""}${seconds}`
+  }
 
   return (
     <div>
       <h1>Stopwatch</h1>
       <div>
-        Time: {time}
+        Time: {formatTime(time)}
       </div>
       {running ? (
         <button onClick={stopStopwatch}>Stop</button>
